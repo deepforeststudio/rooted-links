@@ -1,7 +1,7 @@
 import * as React from "react";
 import type { HeadFC, PageProps } from "gatsby";
 import { css } from "@emotion/react";
-import { config } from "./config";
+import { config } from "../data/config";
 import * as fa from "react-icons/fa";
 import * as devicons from "react-icons/di";
 import * as simpleIcons from "react-icons/si";
@@ -30,7 +30,7 @@ import {
   Text,
   useDisclosure,
 } from "@chakra-ui/react";
-import { defaults } from "./defaults";
+import { defaults } from "../data/defaults";
 
 const icons = {
   fa,

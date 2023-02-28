@@ -1,0 +1,7 @@
+version: "3"
+services:
+  example.org:
+    image: therebelrobot/coven-links
+    container_name: covenofthewoods.church
+    ports:
+      - 8080:80
