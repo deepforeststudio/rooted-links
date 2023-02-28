@@ -735,6 +735,9 @@ export const Head: HeadFC = () => (
   <>
     <title>{config.title}</title>
     <meta name="description" content={config.description} />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
     <meta property="og:title" content={config.meta.ogTitle} />
     <meta property="og:type" content={config.meta.ogType} />
     <meta property="og:image" content={config.meta.ogImage} />
