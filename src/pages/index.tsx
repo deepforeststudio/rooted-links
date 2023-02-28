@@ -731,4 +731,20 @@ const App = (props: PageProps) => {
 
 export default App;
 
-export const Head: HeadFC = () => <title>{config.title}</title>;
+export const Head: HeadFC = () => (
+  <>
+    <title>{config.title}</title>
+    <meta name="description" content={config.description} />
+    <meta property="og:title" content={config.meta.ogTitle} />
+    <meta property="og:type" content={config.meta.ogType} />
+    <meta property="og:image" content={config.meta.ogImage} />
+    <meta property="og:url" content={config.meta.ogUrl} />
+    <meta name="twitter:card" content={config.meta.twitterCard} />
+
+    <meta property="og:description" content={config.meta.ogDescription} />
+    <meta property="og:site_name" content={config.meta.ogSiteName} />
+    <meta name="twitter:image:alt" content={config.meta.twitterImageAlt} />
+
+    <meta name="twitter:site" content={config.meta.twitterSite} />
+  </>
+);

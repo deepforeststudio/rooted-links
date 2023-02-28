@@ -1,6 +1,17 @@
 export const config = {
   title: "Coven of the Woods",
   description: "Links for Coven of the Woods",
+  meta: {
+    ogTitle: "Coven of the Woods",
+    ogType: "profile",
+    ogImage: "https://i.imgur.com/SYL1MGp.png",
+    ogUrl: "https://covenofthewoods.church",
+    twitterCard: "summary_large_image",
+    ogDescription: "Links for Coven of the Woods",
+    ogSiteName: "Coven of the Woods",
+    twitterImageAlt: "Coven of the Woods",
+    twitterSite: "https://covenofthewoods.church",
+  },
   textColor: "#000",
   url: "https://covenofthewoods.church",
   profileImage: "https://i.imgur.com/MnTfPWe.jpeg",
