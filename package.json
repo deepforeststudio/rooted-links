@@ -10,7 +10,8 @@
   "scripts": {
     "dev": "gatsby develop",
     "start": "gatsby develop",
-    "build": "gatsby build && docker build -t therebelrobot/coven-links .",
+    "build:app": "gatsby build",
+    "build": "npm run build:app",
     "deploy": "caprover deploy",
     "serve": "gatsby serve",
     "clean": "gatsby clean",
