@@ -1,6 +1,4 @@
 {
   "schemaVersion": 2,
-  "dockerfilePath": "./Dockerfile",
-  "server": "dock.aster.hn",
-  "app": "covenofthewoods-new"
+  "dockerfilePath": "./Dockerfile"
 }

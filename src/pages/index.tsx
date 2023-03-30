@@ -1,7 +1,5 @@
 import * as React from "react";
 import type { HeadFC, PageProps } from "gatsby";
-import { css } from "@emotion/react";
-import { config } from "../data/config";
 import * as fa from "react-icons/fa";
 import * as devicons from "react-icons/di";
 import * as simpleIcons from "react-icons/si";
@@ -30,7 +28,7 @@ import {
   Text,
   useDisclosure,
 } from "@chakra-ui/react";
-import { defaults } from "../data/defaults";
+import { defaults as defaultsOriginal } from "../data/defaults";
 
 const icons = {
   fa,
@@ -38,7 +36,12 @@ const icons = {
   simpleIcons,
 } as any;
 
-const CalendarPanel: React.FC<any> = ({ Icon, children, ...buttonProfile }) => {
+const CalendarPanel: React.FC<any> = ({
+  Icon,
+  children,
+  config,
+  ...buttonProfile
+}) => {
   const {
     icon,
     icontype,
@@ -47,10 +50,14 @@ const CalendarPanel: React.FC<any> = ({ Icon, children, ...buttonProfile }) => {
     isAgeRestricted,
     calendar,
     calendarLabel,
-    categoryFilters,
   } = buttonProfile;
 
-  console.log(icontype, icon);
+  let { categoryFilters } = buttonProfile;
+
+  if (typeof categoryFilters === "string") {
+    categoryFilters = JSON.parse(categoryFilters);
+  }
+
   const { isOpen, onToggle } = useDisclosure();
 
   const [filters, setFilters] = React.useState<any>([]);
@@ -115,7 +122,8 @@ const CalendarPanel: React.FC<any> = ({ Icon, children, ...buttonProfile }) => {
       setEvents(initialTodos?.events || []);
     }
   }
-  console.log(events);
+
+  const defaults = { ...defaultsOriginal, ...config.defaultOverrides };
 
   return (
     <Box w="100%" overflow="hidden">
@@ -520,6 +528,7 @@ const CalendarPanel: React.FC<any> = ({ Icon, children, ...buttonProfile }) => {
 const PrettyButton: React.FC<any> = ({
   children,
   onClick = () => null,
+  config,
   ...buttonConfig
 }) => {
   const {
@@ -531,8 +540,6 @@ const PrettyButton: React.FC<any> = ({
     calendar,
     calendarLabel,
   } = buttonConfig;
-
-  console.log(icontype, icon);
 
   let Icon: any = () => null;
   if (
@@ -547,6 +554,8 @@ const PrettyButton: React.FC<any> = ({
     Icon = (props: any) => <Image maxHeight="18px" src={icon} {...props} />;
 
   const { isOpen, onToggle } = useDisclosure();
+
+  const defaults = { ...defaultsOriginal, ...config.defaultOverrides };
 
   if (isAgeRestricted) {
     return (
@@ -619,7 +628,7 @@ const PrettyButton: React.FC<any> = ({
 
   if (calendar) {
     return (
-      <CalendarPanel Icon={Icon} {...buttonConfig}>
+      <CalendarPanel Icon={Icon} config={config} {...buttonConfig}>
         {children}
       </CalendarPanel>
     );
@@ -665,7 +674,8 @@ const PrettyButton: React.FC<any> = ({
   );
 };
 
-const IndexPage: React.FC<PageProps> = () => {
+const IndexPage: React.FC<PageProps> = ({ serverData }) => {
+  const config = (serverData as any)?.meta || {};
   return (
     <>
       <style
@@ -710,11 +720,12 @@ const IndexPage: React.FC<PageProps> = () => {
             {config.url}
           </Heading>
 
-          {config.buttons.map((button) => (
-            <PrettyButton key={button.label} {...button}>
+          {config.links.map((button: any) => (
+            <PrettyButton key={button.label} config={config} {...button}>
               {button.label}
             </PrettyButton>
           ))}
+          <Box height="2rem" />
         </Box>
       </Box>
     </>
@@ -731,23 +742,90 @@ const App = (props: PageProps) => {
 
 export default App;
 
-export const Head: HeadFC = () => (
-  <>
-    <title>{config.title}</title>
-    <meta name="description" content={config.description} />
+export async function getServerData() {
+  const clientId = process.env.GATSBY_CLIENT_ID;
+  const res = await fetch(process.env.GATSBY_GRAPHQL_URL || "", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      query: `
+        query GetPageMeta {
+          meta(where: { clientId: { _eq: "${clientId}" } }) {
+            ageRestricted
+            background
+            defaultButtonColor
+            defaultButtonTextColor
+            description
+            externalCss
+            id
+            ogDescription
+            ogImage
+            ogSiteName
+            ogTitle
+            ogUrl
+            profileImage
+            textColor
+            title
+            twitterImageAlt
+            twitterSite
+            url
+            defaultOverrides
+            clientId
+            overrideCSS
+            links(order_by: { order: asc }) {
+              calendar
+              calendarLabel
+              calendarUrl
+              categoryFilters
+              clientId
+              icon
+              icontype
+              id
+              isAgeRestricted
+              label
+              url
+            }
+            links_aggregate {
+              aggregate {
+                count
+              }
+            }
+          }
+        }
+      `,
+    }),
+  });
+  const results = await res.json();
+  console.log(results);
+  return {
+    props: {
+      meta: results.data.meta[0],
+    },
+  };
+}
 
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+export const Head: HeadFC = ({ serverData }) => {
+  const config = (serverData as any)?.meta || {};
+  return (
+    <>
+      <title>{config?.title}</title>
+      <meta name="description" content={config?.description} />
 
-    <meta property="og:title" content={config.meta.ogTitle} />
-    <meta property="og:type" content={config.meta.ogType} />
-    <meta property="og:image" content={config.meta.ogImage} />
-    <meta property="og:url" content={config.meta.ogUrl} />
-    <meta name="twitter:card" content={config.meta.twitterCard} />
+      <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <meta property="og:description" content={config.meta.ogDescription} />
-    <meta property="og:site_name" content={config.meta.ogSiteName} />
-    <meta name="twitter:image:alt" content={config.meta.twitterImageAlt} />
+      <meta property="og:title" content={config?.ogTitle} />
+      <meta property="og:type" content={config?.ogType} />
+      <meta property="og:image" content={config?.ogImage} />
+      <meta property="og:url" content={config?.ogUrl} />
+      <meta name="twitter:card" content={config?.twitterCard} />
 
-    <meta name="twitter:site" content={config.meta.twitterSite} />
-  </>
-);
+      <meta property="og:description" content={config?.ogDescription} />
+      <meta property="og:site_name" content={config?.ogSiteName} />
+      <meta name="twitter:image:alt" content={config?.twitterImageAlt} />
+
+      <meta name="twitter:site" content={config?.twitterSite} />
+    </>
+  );
+};

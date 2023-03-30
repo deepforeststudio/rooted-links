@@ -1,5 +1,3 @@
-import { config } from "./config";
-
 export const defaults = {
   Facebook: {
     background: "#3b5998",
@@ -7,6 +5,10 @@ export const defaults = {
   },
   Twitter: {
     background: "#1da1f2",
+    color: "#fff",
+  },
+  Tumblr: {
+    background: "#1B3360",
     color: "#fff",
   },
   Instagram: {
@@ -37,5 +39,12 @@ export const defaults = {
     background: "#2699f6",
     color: "#fff",
   },
-  ...config.defaultOverrides,
+  LoyalFans: {
+    background: "#fff",
+    color: "#D90C16",
+  },
+  Throne: {
+    background: "#fff",
+    color: "#000",
+  },
 } as any;
