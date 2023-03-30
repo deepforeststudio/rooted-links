@@ -4,7 +4,5 @@ services:
     build: .
     image: therebelrobot/coven-links
     container_name: covenofthewoods.church
-    environment:
-      - PORT=9090
     ports:
-      - 9090:9090
+      - 9000:9000
