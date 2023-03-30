@@ -4,5 +4,7 @@ services:
     build: .
     image: therebelrobot/coven-links
     container_name: covenofthewoods.church
+    env_file:
+      - .env
     ports:
       - 9000:9000
