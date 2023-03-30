@@ -1,7 +1,10 @@
 version: "3"
 services:
   example.org:
+    build: .
     image: therebelrobot/coven-links
     container_name: covenofthewoods.church
+    environment:
+      - PORT=9090
     ports:
-      - 8080:80
+      - 9090:9090
