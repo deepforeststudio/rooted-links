@@ -1,5 +1,5 @@
 # Use the official Node.js 16 image as the base image
-FROM node:16-alpine
+FROM node:18-alpine
 
 # Set the working directory to /app
 WORKDIR /app
@@ -8,7 +8,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install dependencies
-RUN npm install
+RUN npm install --legacy-peer-deps
 
 # Copy the rest of the app code to the container
 COPY . .
@@ -17,7 +17,7 @@ COPY . .
 RUN npm run build
 
 # Expose the port used by the app
-EXPOSE 8000
+EXPOSE 9000
 
 # Start the app
 CMD ["npm", "run", "serve"]
