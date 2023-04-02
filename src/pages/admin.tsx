@@ -3,8 +3,27 @@ import type { HeadFC, PageProps } from "gatsby";
 
 import { ChakraProvider } from "@chakra-ui/react";
 import { IndexPage } from "../components/IndexPage";
+import { Auth0Provider } from "@auth0/auth0-react";
 
 const App = (props: PageProps) => {
+  if (process.env.GATSBY_AUTH0_CLIENT_ID) {
+    return (
+      <Auth0Provider
+        domain={process.env.GATSBY_AUTH0_DOMAIN}
+        clientId={process.env.GATSBY_AUTH0_CLIENT_ID}
+        authorizationParams={{
+          redirect_uri: window.location.href,
+        }}
+        useRefreshTokens={true}
+        cacheLocation="localstorage"
+      >
+        <ChakraProvider>
+          <IndexPage {...props} />
+        </ChakraProvider>
+      </Auth0Provider>
+    );
+  }
+
   return (
     <ChakraProvider>
       <IndexPage {...props} />
