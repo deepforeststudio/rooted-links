@@ -15,7 +15,9 @@
     "deploy": "caprover deploy",
     "serve": "gatsby serve",
     "clean": "gatsby clean",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "setup-template-head": "git remote add template git@github.com:deepforeststudio/rooted-links.git",
+    "update-template-head": "git fetch template && git merge template/main --allow-unrelated-histories"
   },
   "dependencies": {
     "@auth0/auth0-react": "^2.0.1",
