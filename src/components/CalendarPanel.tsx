@@ -36,12 +36,15 @@ export const CalendarPanel: React.FC<any> = ({
     isAgeRestricted,
     calendar,
     calendarLabel,
+    calendarId,
   } = buttonProfile;
 
   let { categoryFilters } = buttonProfile;
 
   if (typeof categoryFilters === "string") {
     categoryFilters = JSON.parse(categoryFilters);
+  } else if (!categoryFilters) {
+    categoryFilters = [];
   }
 
   const { isOpen, onToggle } = useDisclosure({ isOpen: !!calendarButtonOpen });
@@ -93,7 +96,9 @@ export const CalendarPanel: React.FC<any> = ({
   // ------------------------------
   const [events, setEvents] = React.useState([]);
   const { get, post, response, loading, error } = useFetch(
-    buttonProfile.calendarUrl
+    `${process.env.GATSBY_CALENDAR_ROOT}/?${new URLSearchParams({
+      calid: calendarId,
+    })}`
   );
 
   React.useEffect(() => {
@@ -101,10 +106,10 @@ export const CalendarPanel: React.FC<any> = ({
   }, []);
 
   async function initializeEvents() {
-    const initialTodos = await get("/todos");
+    const initialEvents = await get();
     if (response.ok) {
       // TODO: only grab events after today
-      setEvents(initialTodos?.events || []);
+      setEvents(initialEvents?.events || []);
     }
   }
 
@@ -178,7 +183,7 @@ export const CalendarPanel: React.FC<any> = ({
       </ButtonGroup>
       <Box
         pointerEvents="all"
-        height={isOpen ? "300px" : 0}
+        height={!isOpen ? 0 : categoryFilters.length ? "300px" : "210px"}
         borderColor={isOpen ? "#ccc" : "transparent"}
         borderWidth="1px"
         opacity={isOpen ? 1 : 0}
@@ -364,8 +369,7 @@ export const CalendarPanel: React.FC<any> = ({
                                 : "gray.100"
                             }
                           />
-                          {((weekindex === 0 && dayindex === 0) ||
-                            day.getDate() === 1) && (
+                          {weekindex === 0 && dayindex === 0 && (
                             <>
                               <Text
                                 zIndex={2}
@@ -394,6 +398,24 @@ export const CalendarPanel: React.FC<any> = ({
                                 borderTopRightRadius="4px"
                               >
                                 Today
+                              </Text>
+                            </>
+                          )}
+                          {day.getDate() === 1 && (
+                            <>
+                              <Text
+                                zIndex={2}
+                                fontSize="10px"
+                                position="absolute"
+                                top="0"
+                                left="0"
+                                background={config.defaultButtonColor}
+                                color={config.defaultButtonTextColor}
+                                px="2px"
+                                py="1px"
+                                borderBottomRightRadius="4px"
+                              >
+                                {thisMonth}
                               </Text>
                             </>
                           )}

@@ -8,6 +8,7 @@ export const IndexPage: React.FC<PageProps> = ({ serverData, location }) => {
   const config = (serverData as any)?.meta || {};
   const isAdminEnabled =
     location.pathname.includes("admin") && !!process.env.GATSBY_AUTH0_CLIENT_ID;
+  console.log(config.links);
   return (
     <>
       <style
@@ -52,12 +53,34 @@ export const IndexPage: React.FC<PageProps> = ({ serverData, location }) => {
             {config.url}
           </Heading>
 
-          {!isAdminEnabled &&
-            config.links.map((button: any) => (
-              <PrettyButton key={button.label} config={config} {...button}>
-                {button.label}
-              </PrettyButton>
-            ))}
+          {!isAdminEnabled && (
+            <>
+              {!!config.injectedHTML &&
+                config.injectedHTMLPosition === "top" && (
+                  <Box
+                    w="100%"
+                    dangerouslySetInnerHTML={{
+                      __html: config.injectedHTML,
+                    }}
+                  />
+                )}
+              {config.links.map((button: any) => (
+                <PrettyButton key={button.label} config={config} {...button}>
+                  {button.label}
+                </PrettyButton>
+              ))}
+              {!!config.injectedHTML &&
+                config.injectedHTMLPosition === "bottom" && (
+                  <Box
+                    w="100%"
+                    dangerouslySetInnerHTML={{
+                      __html: config.injectedHTML,
+                    }}
+                  />
+                )}
+            </>
+          )}
+
           {isAdminEnabled && <AdminPanelWithAuth config={config} />}
           <Box height="2rem" />
         </Box>
